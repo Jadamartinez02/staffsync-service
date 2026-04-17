@@ -8,7 +8,8 @@ public record EmployeeResponse(
     String lastName,
     String email,
     String position,
-    LocalDateTime creationDate
+    LocalDateTime creationDate,
+    LocalDateTime lastModifiedDate
 ) {
 
 }

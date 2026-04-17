@@ -2,6 +2,8 @@ package com.app.staffsync_service.service.impl;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.app.staffsync_service.dto.request.TaskRequest;
@@ -43,20 +45,18 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskResponse> getAllTasks() {
-        return taskRepository.findAll().stream()
-                .map(mapper::toResponse)
-                .toList();
+    public Page<TaskResponse> getAllTasks(Pageable pageable) {
+        return taskRepository.findAll(pageable)
+                .map(mapper::toResponse);
     }
 
     @Override
-    public List<TaskResponse> getTasksByEmployeeId(Long employeeId) {
+    public Page<TaskResponse> getTasksByEmployeeId(Long employeeId, Pageable pageable) {
         if (!employeeRepository.existsById(employeeId)) {
             throw new RuntimeException("Employee with ID: " + employeeId + " not found.");
         }
-        return taskRepository.findByEmployeeId(employeeId).stream()
-                .map(mapper::toResponse)
-                .toList();
+        return taskRepository.findByEmployeeId(employeeId, pageable)
+                .map(mapper::toResponse);
     }
 
     @Override

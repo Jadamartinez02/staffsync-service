@@ -9,7 +9,9 @@ public record TaskResponse(
     String state,
     LocalDateTime expirationDate,
     Long employeeId,
-    String employeeFullName
+    String employeeFullName,
+    LocalDateTime creationDate,
+    LocalDateTime lastModifiedDate
 ) {
 
 }

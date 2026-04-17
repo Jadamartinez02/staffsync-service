@@ -2,6 +2,9 @@ package com.app.staffsync_service.model;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import com.app.staffsync_service.model.enums.StateTask;
 
 import jakarta.persistence.*;
@@ -30,7 +33,14 @@ public class Task {
 
     @Column(name = "expiration_date")
     private LocalDateTime expirationDate;
-
+    
+    @CreatedDate
+    @Column(name = "creation_date", updatable = false)
+    private LocalDateTime creationDate;
+    @LastModifiedDate
+    @Column(name = "last_modified_date")
+    private LocalDateTime lastModifiedDate;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;

@@ -1,7 +1,9 @@
 package com.app.staffsync_service.controller;
 
-import java.util.List;
-
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,13 +40,13 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskResponse>> getAllTasks() {
-        return ResponseEntity.ok(taskService.getAllTasks());
+    public ResponseEntity<Page<TaskResponse>> getAllTasks(@ParameterObject @PageableDefault(size = 10, page = 0)Pageable pageable) {
+        return ResponseEntity.ok(taskService.getAllTasks(pageable));
     }
 
     @GetMapping("/empleado/{empleadoId}")
-    public ResponseEntity<List<TaskResponse>> getTasksByEmployeeId(@PathVariable Long employeeId) {
-        return ResponseEntity.ok(taskService.getTasksByEmployeeId(employeeId));
+    public ResponseEntity<Page<TaskResponse>> getTasksByEmployeeId(@PathVariable Long employeeId,@ParameterObject @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        return ResponseEntity.ok(taskService.getTasksByEmployeeId(employeeId, pageable));
     }
 
     @PutMapping("/{id}")

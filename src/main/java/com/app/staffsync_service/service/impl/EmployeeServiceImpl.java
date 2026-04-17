@@ -1,7 +1,8 @@
 package com.app.staffsync_service.service.impl;
 
-import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.app.staffsync_service.dto.request.EmployeeRequest;
@@ -37,10 +38,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeResponse> getAllEmployees() {
-        return employeeRepository.findAll().stream()
-                .map(mapper::toResponse)
-                .toList();
+    public Page<EmployeeResponse> getAllEmployees(Pageable pageable) {
+        return employeeRepository.findAll(pageable)
+                .map(mapper::toResponse);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (!existingEmployee.getEmail().equals(request.email()) && employeeRepository.existsByEmail(request.email())) {
             throw new IllegalArgumentException("Email is already in use");
         }
-
+ 
         mapper.updateEntityFromRequest(request, existingEmployee);
         Employee updatedEmployee = employeeRepository.save(existingEmployee);
         return mapper.toResponse(updatedEmployee);
