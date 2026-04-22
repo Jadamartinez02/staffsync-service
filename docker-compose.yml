@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # 1. LA BASE DE DATOS (El Elefante)
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: staffsync-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: staffsync_db
+    ports:
+      - "5432:5432" # Para que puedas verla desde tu DBeaver/PgAdmin
+    volumes:
+      - pg-data:/var/lib/postgresql/data # El disco duro virtual para no perder datos
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. TU MICROSERVICIO (La API)
+  staffsync-api:
+    build: . # Le dice que lea el Dockerfile que acabamos de crear
+    container_name: staffsync-app
+    ports:
+      - "8080:8080" # Para que puedas usar Swagger en tu navegador
+    depends_on:
+      postgres-db:
+        condition: service_healthy # Espera a que la BD despierte antes de arrancar la API
+    environment:
+      # Sobreescribimos el properties para que apunte al contenedor de la BD, no a tu PC
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/staffsync_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+volumes:
+  pg-data:
