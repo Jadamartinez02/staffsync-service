@@ -35,5 +35,25 @@ services:
       - SPRING_DATASOURCE_PASSWORD=admin
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
+  # 2. LA BASE DE DATOS DE LOGS
+  loki:
+    image: grafana/loki:latest
+    container_name: staffsync-loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+
+  # 3. LA SALA DE CONTROL VISUAL
+  grafana:
+    image: grafana/grafana:latest
+    container_name: staffsync-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - loki
+
 volumes:
   pg-data:
